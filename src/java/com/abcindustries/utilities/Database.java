@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 Len Payne <len.payne@lambtoncollege.ca>.
+ * Updated 2015 Mark Russell <mark.russell@lambtoncollege.ca>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +30,13 @@ public class Database {
     public static Connection getConnection() {        
         Connection result = null;
         try {
-            // TODO: Make sure that you change the credentials to match your
-            //       own student number
+            // TODO: Make sure that you change the x's in the credentials to
+            //       match your own student number
             Class.forName("com.mysql.jdbc.Driver");
             String server = "ipro.lambton.on.ca";
-            String database = "c0xxxxxx-java";
-            String user = "c0xxxxxx-java";
-            String pass = "c0xxxxxx";
+            String database = "c0633176-java";
+            String user = "c0633176-java";
+            String pass = "c0633176";
             String jdbc = "jdbc:mysql://" + server + ":3306/" + database;
             result = DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {

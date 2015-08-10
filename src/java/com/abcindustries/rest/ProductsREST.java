@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 Len Payne <len.payne@lambtoncollege.ca>.
+ * Updated 2015 Mark Russell <mark.russell@lambtoncollege.ca>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +55,13 @@ public class ProductsREST {
     @Path("{id}")
     @Produces("application/json")
     public Response getById(@PathParam("id") int id) {
-        // TODO: Use controller's getById method to get a Product, then use toJson
-        return null;
+        // TODO: Use the controller's getById method to get a Product, then use toJson
+        try {
+            return Response.ok(products.getById(id).toJson()).build();
+        } catch (Exception e) {
+             return Response.status(500).build();
+        }
+       
     }
 
     @POST
@@ -76,14 +82,27 @@ public class ProductsREST {
     @Path("{id}")
     @Consumes("application/json")
     public Response set(@PathParam("id") int id, JsonObject json) {
-        // TODO: Use controller's set method
-        return null;
+        // TODO: Use the controller's set method
+        try {
+            Product P = new Product(json);
+            products.set(id, P);
+            return Response.ok().build();
+        } catch (SQLException ex) {
+            return Response.status(500).build();
+
+        }
     }
+    
     
     @DELETE
     @Path("{id}")
     public Response set(@PathParam("id") int id) {
-        // TODO: Use controller's delete method
-        return null;
+        // TODO: Use the controller's delete method
+        try {
+            products.delete(id);
+            return Response.ok().build();
+        } catch (SQLException ex) {
+            return Response.status(500).build();
+        }
     }
 }

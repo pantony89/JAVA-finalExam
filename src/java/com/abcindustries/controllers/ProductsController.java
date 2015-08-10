@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 Len Payne <len.payne@lambtoncollege.ca>.
+ * Updated 2015 Mark Russell <mark.russell@lambtoncollege.ca>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
+import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 
 /**
  *
@@ -59,7 +62,11 @@ public class ProductsController {
 
     public JsonArray toJson() {
         // TODO: Build a JsonArray object from the List
-        return null;
+        JsonArrayBuilder json = Json.createArrayBuilder();
+        productList.stream().forEach((p) -> {
+            json.add(p.toJson());
+        });
+        return json.build();
     }
 
     public Product getById(int id) {
@@ -82,7 +89,7 @@ public class ProductsController {
         
         // Name is Unique and ProductId is auto-incremented, so we can find
         // the actual ProductId based on the Name
-        // -- Vendors does not have this issues --
+        // -- Vendors does not have this issue --
         sql = "SELECT ProductId FROM Products WHERE Name = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, p.getName());
@@ -97,9 +104,35 @@ public class ProductsController {
 
     public void set(int id, Product p) throws SQLException {
         // TODO: Similar to the add() method
+        Connection conn = Database.getConnection();
+        String sql = "UPDATE Products SET name = ?, vendorId = ? WHERE productId =? ";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, p.getName());
+        stmt.setInt(2, p.getVendorId());
+        int result = stmt.executeUpdate();  
+         sql = "SELECT ProductId FROM Products WHERE Name = ?";
+        stmt = conn.prepareStatement(sql);
+        stmt.setString(1, p.getName());
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        p.setProductId(rs.getInt("ProductId"));
+        
+        if (result == 1) {
+           Product res=getById(id);
+            res.setName(p.getName());
+           res.setVendorId(p.getVendorId());
+        }
     }
 
     public void delete(int id) throws SQLException {
         // TODO: Remember to delete from both the List and the DB
+           Connection conn = Database.getConnection();
+           String sql="DELETE products WHERE productid=?";
+           PreparedStatement stmt=conn.prepareStatement(sql);
+           int result=stmt.executeUpdate();
+           if(result==0){
+               Product res=getById(id);
+           productList.remove(res);
+           }
     }
 }
